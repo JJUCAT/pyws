@@ -71,6 +71,39 @@ def get_time(context):
   time_string = match[0].replace(' ', '-').replace('/', '-')
   return time_string
 
+def calculate_sigma(array_x, array_y, array_yaw):
+  """计算 x y yaw 列表数据的均值，方差，总体标志差，样本标准差
+
+  Args:
+      array_x (list): x 数据列表
+      array_y (list): y 数据列表
+      array_yaw (list): yaw 数据列表
+
+  Returns:
+      (str): x y yaw 数据消息
+  """  
+  mean_x = np.mean(array_x)
+  mean_y = np.mean(array_y)
+  mean_yaw = np.mean(array_yaw)
+  print('mean x: %f, mean y: %f, mean yaw: %f.' %(mean_x, mean_y, mean_yaw))
+  var_x = np.var(array_x)
+  var_y = np.var(array_y)
+  var_yaw = np.var(array_yaw)
+  print('var x: %f, var y: %f, var yaw: %f.' %(var_x, var_y, var_yaw))
+  total_std_x = np.std(array_x)
+  total_std_y = np.std(array_y)
+  total_std_yaw = np.std(array_yaw)
+  print('total std x: %f, total std y: %f, total std yaw: %f.' %(total_std_x, total_std_y, total_std_yaw))
+  sample_std_x = np.std(array_x, ddof=1)
+  sample_std_y = np.std(array_y, ddof=1)
+  sample_std_yaw = np.std(array_yaw, ddof=1)
+  print('sample std x: %f, sample std y: %f, sample std yaw: %f.' %(sample_std_x, sample_std_y, sample_std_yaw))
+  
+  msg_x = 'mean x:' + format(mean_x, ".3f") + ' tstd x:' + format(total_std_x, ".3f") + ' sstd x:' + format(sample_std_x, ".3f")
+  msg_y = 'mean y:' + format(mean_y, ".3f") + ' tstd y:' + format(total_std_y, ".3f") + ' sstd y:' + format(sample_std_y, ".3f")
+  msg_yaw = 'mean yaw:' + format(mean_yaw, ".3f") + ' tstd y:' + format(total_std_yaw, ".3f") + ' sstd yaw:' + format(sample_std_yaw, ".3f")
+  return msg_x, msg_y, msg_yaw
+  
 
 if __name__ == '__main__':
   file_path = '/home/yijiahe/sz-no12-log/log/navit_auto_dock.log'
@@ -93,6 +126,9 @@ if __name__ == '__main__':
   exported_dock_num = 0
   filtered_dock_num = 0
   approach_dock_num = 0
+  edock_x = []
+  edock_y = []
+  edock_yaw = []
   for line in filelines:
     is_end = line.find(end_time_marker)
     if is_end >= 0:
@@ -119,6 +155,9 @@ if __name__ == '__main__':
       is_end = line.find(end_marker)
       if find_expected_index >= 0:
         xyt = get_pose(line, find_expected_index)
+        edock_x.append(float(xyt[0]))
+        edock_y.append(float(xyt[1]))
+        edock_yaw.append(float(xyt[2]))
         final_exported_dock = xyt
         exported_dock_num += 1
         print('expected dock pose:[', exported_dock_num, '][', xyt[0], xyt[1], xyt[2], ']')
@@ -143,6 +182,14 @@ if __name__ == '__main__':
         plot_point_with_direction(ax, float(final_exported_dock[0]), float(final_exported_dock[1]), float(final_exported_dock[2]), 0.4, 'final', 'blue')
         print('final filtered dock pose:[final][', final_filtered_dock[0], final_filtered_dock[1], final_filtered_dock[2], ']')
         plot_point_with_direction(ax, float(final_filtered_dock[0]), float(final_filtered_dock[1]), float(final_filtered_dock[2]), 0.4, 'final', 'green')
+        
+        msgs = calculate_sigma(edock_x, edock_y, edock_yaw)
+        edock_x.clear
+        edock_y.clear
+        edock_yaw.clear
+        msg = msgs[0]+'---'+msgs[1]+'---'+msgs[2]
+        print('title: ', msg)
+        # plt.title(msg,y=0,loc='right')
         plt.autoscale(enable=True, axis='both', tight=None)
         time = get_time(line)
         print('final time:', save_path+time)
