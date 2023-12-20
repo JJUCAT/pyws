@@ -47,7 +47,7 @@ def get_pose(context, start_index = 0):
       (list): 三个浮点数
   """  
   string = context[start_index:]
-  print('check string: ', string)
+  # print('check string: ', string)
   pattern = r"\d+\.\d+"
   # match = re.search(pattern, string) # 匹配到第一个规则就返回了
   match = re.findall(pattern, string) # 匹配全部才返回
@@ -80,7 +80,7 @@ def calculate_sigma(array_x, array_y, array_yaw):
       array_yaw (list): yaw 数据列表
 
   Returns:
-      (str): x y yaw 数据消息
+      (float): x y yaw 数据消息
   """  
   mean_x = np.mean(array_x)
   mean_y = np.mean(array_y)
@@ -99,20 +99,25 @@ def calculate_sigma(array_x, array_y, array_yaw):
   sample_std_yaw = np.std(array_yaw, ddof=1)
   print('sample std x: %f, sample std y: %f, sample std yaw: %f.' %(sample_std_x, sample_std_y, sample_std_yaw))
   
-  msg_x = 'mean x:' + format(mean_x, ".3f") + ' tstd x:' + format(total_std_x, ".3f") + ' sstd x:' + format(sample_std_x, ".3f")
-  msg_y = 'mean y:' + format(mean_y, ".3f") + ' tstd y:' + format(total_std_y, ".3f") + ' sstd y:' + format(sample_std_y, ".3f")
-  msg_yaw = 'mean yaw:' + format(mean_yaw, ".3f") + ' tstd y:' + format(total_std_yaw, ".3f") + ' sstd yaw:' + format(sample_std_yaw, ".3f")
-  return msg_x, msg_y, msg_yaw
-  
+  return sample_std_x, sample_std_y, sample_std_yaw
+  # msg_x = 'sstd x:' + format(sample_std_x, ".3f")
+  # msg_y = 'sstd y:' + format(sample_std_y, ".3f")
+  # msg_yaw = 'sstd yaw:' + format(sample_std_yaw, ".3f")
+  # return msg_x, msg_y, msg_yaw
+
 
 if __name__ == '__main__':
+  """估计回充参数的计算，需要确保充电桩的朝向和 odom 接近
+     一般做法是将清洁车手动对位充电桩，然后直线后退一段距离后重置 odom
+     这样感知到的充电桩坐标 [x] 表示纵向感知， [y] 表示横向感知， [yaw] 表示航向角感知
+     多次测试后需要重置 odom 消除 odom 漂移累计的误差，提高估计的可靠性
+  """  
   file_path = '/home/yijiahe/sz-no12-log/log/navit_auto_dock.log'
   save_path = '/home/yijiahe/sz-no12-log/log/'
   filelines = read_lines(file_path)
   print('file:', file_path, 'lines num is', len(filelines)) # 逗号隔开会自动加空格
 
   ax = plt.gca()
-
 
   auto_dock_num = 0
   start_time_marker = '2023/12/15 16:34:15:317' # 日志起始时间
@@ -126,9 +131,17 @@ if __name__ == '__main__':
   exported_dock_num = 0
   filtered_dock_num = 0
   approach_dock_num = 0
-  edock_x = []
+  edock_x = [] # 感知的充电桩 odom 坐标 [x, y, yaw]
   edock_y = []
   edock_yaw = []
+  first_sstd_x = [] # 第一次 approach dock 感知的样本标准差
+  first_sstd_y = []
+  first_sstd_yaw = []
+  second_sstd_x = [] # 第二次 approach dock 感知的样本标准差
+  second_sstd_y = []
+  second_sstd_yaw = []
+  fmsg = "" # approach dock 标志差信息
+  smsg = ""
   for line in filelines:
     is_end = line.find(end_time_marker)
     if is_end >= 0:
@@ -147,6 +160,17 @@ if __name__ == '__main__':
     if find_index >= 0:
       approach_start = True
       approach_dock_num += 1
+      if len(edock_x) > 0:
+        print(' first auto dock start ')
+        sstd = calculate_sigma(edock_x, edock_y, edock_yaw)
+        fmsg = 'first sstd x:'+format(sstd[0], ".3f")+'---'+'sstd y:' + format(sstd[1], ".3f")+'---'+'sstd yaw:' + format(sstd[2], ".3f")
+        print('first title: ', smsg)
+        first_sstd_x.append(sstd[0])
+        first_sstd_y.append(sstd[1])
+        first_sstd_yaw.append(sstd[2])
+        edock_x.clear()
+        edock_y.clear()
+        edock_yaw.clear()
       print(' ++++++++++ auto dock start ++++++++++ ')
 
     if approach_start == True and start == True:
@@ -169,7 +193,7 @@ if __name__ == '__main__':
         xyt = get_pose(line, find_filtered_index)
         final_filtered_dock = xyt
         filtered_dock_num += 1
-        print('expected dock pose:[', filtered_dock_num, '][', xyt[0], xyt[1], xyt[2], ']')
+        # print('filter dock pose:[', filtered_dock_num, '][', xyt[0], xyt[1], xyt[2], ']')
         plot_point_with_direction(ax, float(xyt[0]), float(xyt[1]), float(xyt[2]), 0.4, str(filtered_dock_num), 'yellow')
       if is_end >= 0:
         approach_start = False
@@ -178,22 +202,27 @@ if __name__ == '__main__':
         approach_dock_num = 0
         auto_dock_num += 1
         print(' ---------- auto dock end ---------- ')
-        print('final expected dock pose:[final][', final_exported_dock[0], final_exported_dock[1], final_exported_dock[2], ']')
+        # print('final expected dock pose:[final][', final_exported_dock[0], final_exported_dock[1], final_exported_dock[2], ']')
         plot_point_with_direction(ax, float(final_exported_dock[0]), float(final_exported_dock[1]), float(final_exported_dock[2]), 0.4, 'final', 'blue')
-        print('final filtered dock pose:[final][', final_filtered_dock[0], final_filtered_dock[1], final_filtered_dock[2], ']')
+        # print('final filtered dock pose:[final][', final_filtered_dock[0], final_filtered_dock[1], final_filtered_dock[2], ']')
         plot_point_with_direction(ax, float(final_filtered_dock[0]), float(final_filtered_dock[1]), float(final_filtered_dock[2]), 0.4, 'final', 'green')
-        
-        msgs = calculate_sigma(edock_x, edock_y, edock_yaw)
-        edock_x.clear
-        edock_y.clear
-        edock_yaw.clear
-        msg = msgs[0]+'---'+msgs[1]+'---'+msgs[2]
-        print('title: ', msg)
-        # plt.title(msg,y=0,loc='right')
+
+        print(' second auto dock start ')
+        sstd = calculate_sigma(edock_x, edock_y, edock_yaw)
+        second_sstd_x.append(sstd[0])
+        second_sstd_y.append(sstd[1])
+        second_sstd_yaw.append(sstd[2])
+        smsg = 'second sstd x:'+format(sstd[0], ".3f")+'---'+'sstd y:' + format(sstd[1], ".3f")+'---'+'sstd yaw:' + format(sstd[2], ".3f")
+        print('second title: ', smsg)
+        plt.title(fmsg+'\n'+smsg)
         plt.autoscale(enable=True, axis='both', tight=None)
         time = get_time(line)
         print('final time:', save_path+time)
         plt.savefig(save_path+time, dpi=300)
         # plt.show()
         plt.cla() # 清除子图
+        print(' -+-+-+-+-+ auto dock end +-+-+-+-+- ')
 
+  print('\033[31m ********** auto dock summary ********** \033[0m')
+  print('\033[31m first approach dock sstd [%f, %f, %f] \033[0m' %(np.mean(first_sstd_x), np.mean(first_sstd_y), np.mean(first_sstd_yaw)))
+  print('\033[31m second approach dock sstd [%f, %f, %f] \033[0m' %(np.mean(second_sstd_x), np.mean(second_sstd_y), np.mean(second_sstd_yaw)))
