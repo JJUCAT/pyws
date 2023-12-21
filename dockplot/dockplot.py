@@ -112,16 +112,16 @@ if __name__ == '__main__':
      这样感知到的充电桩坐标 [x] 表示纵向感知， [y] 表示横向感知， [yaw] 表示航向角感知
      多次测试后需要重置 odom 消除 odom 漂移累计的误差，提高估计的可靠性
   """  
-  file_path = '/home/yijiahe/sz-no12-log/log/navit_auto_dock.log'
-  save_path = '/home/yijiahe/sz-no12-log/log/'
+  file_path = '/home/yijiahe/sz-no12-1218/dock-16-12/navit_auto_dock.log'
+  save_path = '/home/yijiahe/sz-no12-1218/dock-16-12/'
   filelines = read_lines(file_path)
   print('file:', file_path, 'lines num is', len(filelines)) # 逗号隔开会自动加空格
 
   ax = plt.gca()
 
   auto_dock_num = 0
-  start_time_marker = '2023/12/15 16:34:15:317' # 日志起始时间
-  end_time_marker = '2023/12/15 17:43:47' # 日志结束时间
+  start_time_marker = '2023/12/18 14:23:25' # 日志起始时间
+  end_time_marker = '2023/12/18 16:10:00' # 日志结束时间
   start_marker = 'ApproachDock: Goal received'
   end_marker = 'FinalDock: Goal Reached'
   expected_dock_marker = 'expected dock pose'
@@ -140,6 +140,8 @@ if __name__ == '__main__':
   second_sstd_x = [] # 第二次 approach dock 感知的样本标准差
   second_sstd_y = []
   second_sstd_yaw = []
+  final_exported_dock = []
+  final_filtered_dock = []
   fmsg = "" # approach dock 标志差信息
   smsg = ""
   for line in filelines:
