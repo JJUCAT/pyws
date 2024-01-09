@@ -1,0 +1,147 @@
+... logging to /home/yijiahe/.ros/log/da90bad6-ae05-11ee-9360-efa5b1303dca/roslaunch-yijiahe-ThinkStation-K-C1-168935.log
+Checking log directory for disk usage. This may take a while.
+Press Ctrl-C to interrupt
+WARNING: disk usage in log directory [/home/yijiahe/.ros/log] is over 1GB.
+It's recommended that you use the 'rosclean' command.
+
+started roslaunch server http://yijiahe-ThinkStation-K-C1:35883/
+
+SUMMARY
+========
+
+PARAMETERS
+ * /lookup_table_generator/ACKERMANN: False
+ * /lookup_table_generator/ANGULAR_ERR: 2.165674
+ * /lookup_table_generator/ANGULAR_SCALE: 20
+ * /lookup_table_generator/CHECK_DISTANCE: 3.3
+ * /lookup_table_generator/COLLISION_COST: 180
+ * /lookup_table_generator/CONTROL_DELAY: 2
+ * /lookup_table_generator/DELTA_KAPPA: 0.54
+ * /lookup_table_generator/DELTA_V: 0.2
+ * /lookup_table_generator/DELTA_X: 0.5
+ * /lookup_table_generator/DELTA_Y: 0.5
+ * /lookup_table_generator/DELTA_YAW: 0.51
+ * /lookup_table_generator/DIST_ERR: 6
+ * /lookup_table_generator/DIST_SCALE: 60
+ * /lookup_table_generator/DRIVE: False
+ * /lookup_table_generator/ENABLE_CONTROL_SPACE_SAMPLING: False
+ * /lookup_table_generator/ENABLE_SHARP_TRAJECTORY: False
+ * /lookup_table_generator/FORBID_RIGHT_SAMPLE: True
+ * /lookup_table_generator/HEAD: 1.5
+ * /lookup_table_generator/HZ: 5
+ * /lookup_table_generator/IGNORABLE_OBSTACLE_RANGE: 1.0
+ * /lookup_table_generator/LOCAL_REACH_RANG: 0.15
+ * /lookup_table_generator/LOOKUP_TABLE_FILE_NAME: /home/yijiahe/wie...
+ * /lookup_table_generator/MAX_ACCELERATION: 0.5
+ * /lookup_table_generator/MAX_ALPHA: 0.785398
+ * /lookup_table_generator/MAX_D_YAWRATE: 0.5
+ * /lookup_table_generator/MAX_ITERATION: 1000
+ * /lookup_table_generator/MAX_KAPPA: 2.70709
+ * /lookup_table_generator/MAX_PSI: 0.523599
+ * /lookup_table_generator/MAX_STEERING: 1.2
+ * /lookup_table_generator/MAX_V: 1.0
+ * /lookup_table_generator/MAX_WHEEL_ANGULAR_VELOCITY: 5.4
+ * /lookup_table_generator/MAX_X: 5.0
+ * /lookup_table_generator/MAX_Y: 5.0
+ * /lookup_table_generator/MAX_YAW: 1.57
+ * /lookup_table_generator/MAX_YAWRATE: 2.165674
+ * /lookup_table_generator/MIN_RADIUS: 0.3694
+ * /lookup_table_generator/MIN_V: 0.0
+ * /lookup_table_generator/MIN_X: -3.0
+ * /lookup_table_generator/NEW_GOAL_SAMPLING: True
+ * /lookup_table_generator/NGS_GY: 0.17
+ * /lookup_table_generator/NGS_NA: 8
+ * /lookup_table_generator/NGS_NR: 4
+ * /lookup_table_generator/NGS_NY: 1
+ * /lookup_table_generator/NGS_R: 10
+ * /lookup_table_generator/N_H: 10
+ * /lookup_table_generator/N_P: 10
+ * /lookup_table_generator/N_S: 30
+ * /lookup_table_generator/OPTIMIZATION_TOLERANCE: 0.001728
+ * /lookup_table_generator/PARALLEL_B: 2.0
+ * /lookup_table_generator/PARALLEL_N: 3
+ * /lookup_table_generator/PARALLEL_R: 2.8
+ * /lookup_table_generator/REF_PLAN_SAMPLE_NUM: 2
+ * /lookup_table_generator/REF_REACH_RANG: 0.15
+ * /lookup_table_generator/ROBOT_FRAME: base_link
+ * /lookup_table_generator/SAMPLE_STEP: 2.0
+ * /lookup_table_generator/SMAPLE_MAX_DIS: 4
+ * /lookup_table_generator/TARGET_VELOCITY: 0.8
+ * /lookup_table_generator/TARGET_V_FREE: True
+ * /lookup_table_generator/TREAD: 0.5
+ * /lookup_table_generator/TURN_DIRECTION_THRESHOLD: 1.0
+ * /lookup_table_generator/VERBOSE: False
+ * /lookup_table_generator/WHEEL_BASE: 0.95
+ * /lookup_table_generator/WHEEL_RADIUS: 0.185
+ * /lookup_table_generator/YAW_ERR: 0.785398
+ * /lookup_table_generator/YAW_SCALE: 20
+ * /rosdistro: noetic
+ * /rosversion: 1.16.0
+
+NODES
+  /
+    lookup_table_generator (state_lattice_planner/lookup_table_generator)
+
+auto-starting new master
+process[master]: started with pid [168985]
+ROS_MASTER_URI=http://localhost:11311
+
+setting /run_id to da90bad6-ae05-11ee-9360-efa5b1303dca
+process[rosout-1]: started with pid [169014]
+started core service [/rosout]
+process[lookup_table_generator-2]: started with pid [169021]
+MIN_X: -3
+MAX_X: 5
+DELTA_X: 0.5
+MAX_Y: 5
+DELTA_Y: 0.5
+MAX_YAW: 1.57
+DELTA_YAW: 0.51
+LOOKUP_TABLE_FILE_NAME: /home/yijiahe/wiener/navit/src/navit_stack/state_lattice_planner/lookup_table/x3tt_5x5_p12.csv
+TARGET_VELOCITY: 0.8
+MIN_V: 0
+MAX_V: 1
+DELTA_V: 0.2
+MAX_KAPPA: 2.70709
+DELTA_KAPPA: 0.54
+MAX_ACCELERATION: 0.5
+MAX_YAWRATE: 2.16567
+MAX_D_YAWRATE: 0.5
+MAX_WHEEL_ANGULAR_VELOCITY: 5.4
+WHEEL_RADIUS: 0.185
+TREAD: 0.5
+loading lookup table from /home/yijiahe/wiener/navit/src/navit_stack/state_lattice_planner/lookup_table/x3tt_5x5_p12.csv
+x y yaw table size:1688
+N_X: 17
+N_Y: 21
+N_YAW: 7
+states num: 2352 * 6 * 11
+
+...
+successfully optimized
+0, 1.07291, 1.42303, 5.03878, 2.81721
+-0.591214,3.71349,5.8385
+successfully optimized
+0, 1.07291, 1.93383, 5.04839, 2.70137
+-0.656042,3.81813,6.07739
+successfully optimized
+0, 1.07291, 2.49589, 4.99453, 2.69389
+-0.702132,3.65409,6.41683
+successfully optimized
+1, 2.69291, 0.447412, 0.46787, 1.80911
+1.73905,-2.58608,0.836381
+...
+
+success rate: 18214 / 155232 = 0.117334
+lookup table saved as /home/yijiahe/wiener/navit/src/navit_stack/state_lattice_planner/lookup_table/x3tt_5x5_p12.csv
+================================================================================REQUIRED process [lookup_table_generator-2] has died!
+process has finished cleanly
+log file: /home/yijiahe/.ros/log/9557897a-ae02-11ee-9360-efa5b1303dca/lookup_table_generator-2*.log
+Initiating shutdown!
+================================================================================
+[lookup_table_generator-2] killing on exit
+[rosout-1] killing on exit
+[master] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+done
